@@ -23,21 +23,12 @@ public class UserController {
         this.userService=userService;
     }
 
-   @GetMapping("test")
-   public  ResponseEntity<String> test(){
-        return ResponseEntity.ok("testRest");
-   }
 
-    @PostMapping("create")
+    @PostMapping("/create")
     public ResponseEntity<User> create(@RequestBody User user){
-
-       /* if(user.getId()!=null || userService.getUser(user.getId()).isPresent()){
-            logg.warn("Trying to creat user with id or user is present");
-            return ResponseEntity.badRequest().build();
-        }*/
+        //System.out.println("User Controller: "+user);
         logg.info("User Created");
         User userTemp=userService.saveUser(user);
         return ResponseEntity.ok(userTemp);
     }
-
 }//end class

@@ -22,15 +22,21 @@ public class UserServiceImpl1 implements UserService {
 
     @Override
     public User saveUser(User user) {
-
-        userRepository.save(user);
-        return user;
+        User localUser = userRepository.findByDNI(user.getDNI());
+        if(localUser != null){
+            System.out.println("El usuario ya existe");
+            logg.warn("El usuario ya existe");
+            throw new RuntimeException("El usuario ya existe");
+        }else{
+            localUser = userRepository.save(user);
+        }
+        return localUser;
     }
 
     @Override
-    public Optional<User> getUser(Long id) {
+    public User getUser(Long id) {
         Optional<User> userTemp = userRepository.findById(id);
-        return userTemp;
+        return userTemp.get();
     }
 
     @Override
@@ -39,7 +45,7 @@ public class UserServiceImpl1 implements UserService {
             userRepository.deleteById(id);
         }
         catch(Exception e){
-
+            System.out.println(e.getMessage());
         }
     }
 }
