@@ -1,22 +1,16 @@
 package com.sistema.bancario.rest;
 
 import com.sistema.bancario.entity.User;
-import com.sistema.bancario.repository.UserRepository;
 import com.sistema.bancario.services.UserService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
     Logger logg=LoggerFactory.getLogger(UserController.class);
 
     public UserController(UserService userService){
@@ -30,14 +24,20 @@ public class UserController {
 
     @PostMapping("create")
     public ResponseEntity<User> create(@RequestBody User user){
-
-       /* if(user.getId()!=null || userService.getUser(user.getId()).isPresent()){
-            logg.warn("Trying to creat user with id or user is present");
+       if(userService.validUser(user)){
+            logg.warn("Trying to create a existent user");
             return ResponseEntity.badRequest().build();
-        }*/
-        logg.info("User Created");
-        User userTemp=userService.saveUser(user);
-        return ResponseEntity.ok(userTemp);
+        }
+       else {
+           logg.info("User Created");
+           User userTemp = userService.createUser(user);
+           return ResponseEntity.ok(userTemp);
+       }
     }
 
-}//end class
+    @GetMapping("validar")
+    public Boolean validarUser(@RequestBody User user){
+        return userService.validUser(user);
+    }
+
+ }//end class

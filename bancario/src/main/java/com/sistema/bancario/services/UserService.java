@@ -5,13 +5,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
+
 public interface UserService {
 
 
-    public User saveUser(User user);
-    public Optional<User> getUser(Long id);
-    public void deleteUser(Long id);
+    User createUser(User user);
+    Optional<User> findById(Long id);
+    Boolean validUser(User user);
+    void deleteUser(Long id);
 
 
 }

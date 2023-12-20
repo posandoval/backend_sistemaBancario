@@ -12,34 +12,34 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl1 implements UserService {
 
-    private UserRepository userRepository;
-    Logger logg=LoggerFactory.getLogger(UserServiceImpl1.class);
+    private final UserRepository userRepository;
+    private final Logger logg=LoggerFactory.getLogger(UserServiceImpl1.class);
 
     //Reemplaza al autowired
     public UserServiceImpl1(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public User saveUser(User user) {
-
-        userRepository.save(user);
-        return user;
+ @Override
+   public User createUser(User user) {
+     return userRepository.save(user);
     }
 
     @Override
-    public Optional<User> getUser(Long id) {
-        Optional<User> userTemp = userRepository.findById(id);
-        return userTemp;
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
+
+
+    //Metodo para validar si existe un useario a traves del id
+    @Override
+    public Boolean validUser(User user) {
+        return userRepository.existsById(user.getId());
+    }
+
 
     @Override
     public void deleteUser(Long id) {
-        try {
-            userRepository.deleteById(id);
+                   userRepository.deleteById(id);
         }
-        catch(Exception e){
-
-        }
-    }
 }
