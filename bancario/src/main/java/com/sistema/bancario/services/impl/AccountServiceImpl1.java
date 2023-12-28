@@ -6,6 +6,8 @@ import com.sistema.bancario.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AccountServiceImpl1 implements AccountService {
 
@@ -18,9 +20,8 @@ public class AccountServiceImpl1 implements AccountService {
     }
 
     @Override
-    public Account getAccount(Long accountNumber) {
-        Account accountTemp=accountRepository.findByAccountNumber(accountNumber);
-        return accountTemp;
+    public Optional<Account> getAccount(Long accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber);
     }
 
     @Override
@@ -31,4 +32,54 @@ public class AccountServiceImpl1 implements AccountService {
             System.out.println(e.getMessage());
         }
     }
-}
+
+    public Account retirar(Long accountNumber, Double monto){
+        //get Account
+        Optional<Account> temp=accountRepository.findByAccountNumber(accountNumber);
+
+        //retiro
+        Double newBalance=temp.get().getBalance()-monto;
+
+        //set NewBalance
+        temp.get().setBalance(newBalance);
+
+        return accountRepository.save(temp.get());
+    }
+
+    @Override
+    public Account depositar(Long accountNumber, Double monto) {
+        //GetAccount
+        Optional<Account> tempAccount=accountRepository.findByAccountNumber(accountNumber);
+
+        //deposito
+        Double newBalance=tempAccount.get().getBalance()+monto;
+        tempAccount.get().setBalance(newBalance);
+
+        //save upDate Account
+        return accountRepository.save(tempAccount.get());
+    }
+
+    @Override
+    public String tranferir(Long accountNumberOut, Long accountNumberIn, Double monto) {
+
+        //getAccountOut
+        Optional<Account> accountOut=accountRepository.findByAccountNumber(accountNumberOut);
+        //getAccountIn
+        Optional<Account> accountIn=accountRepository.findByAccountNumber(accountNumberIn);
+
+        //tranferencia
+        Double balanceOut=accountOut.get().getBalance()-monto;
+        Double balanceIn=accountIn.get().getBalance()+monto;
+
+        accountOut.get().setBalance(balanceOut);
+        accountIn.get().setBalance(balanceIn);
+
+        //save transfer
+        accountRepository.save(accountOut.get());
+        accountRepository.save(accountIn.get());
+
+        return "Transferencia Existosa";
+    }
+
+
+}//end class
